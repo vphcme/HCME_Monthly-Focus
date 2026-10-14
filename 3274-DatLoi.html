@@ -590,17 +590,22 @@ header{padding:13px 14px;border-radius:0 0 14px 14px}.nav{gap:5px;padding:6px 0}
  #cov .covPjpCell b{font-size:8.5px!important}
 }
 </style>
-<style id="hcme-site-file-mode">
-/* Site file: show all four category detail blocks directly. */
-#ov .siteAccordion.siteFileExpanded > summary {
-    cursor: default !important;
-}
-#ov .siteAccordion.siteFileExpanded > summary::after {
-    display: none !important;
-}
-#ov .siteAccordion.siteFileExpanded {
-    margin-bottom: 10px !important;
-}
+<style id="hcme-site-summary-style">
+#ov .siteSection{margin:10px 8px 6px!important}
+#ov #overview.siteSummaryHost{display:block!important;margin:0 8px 12px!important}
+#ov .siteSummaryCard{background:#fff;border:1px solid #d8e1eb;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px #102a4310;overflow:hidden}
+#ov .siteSummaryGrid{width:100%}
+#ov .siteSummaryHead,#ov .siteSummaryRow{display:grid;grid-template-columns:minmax(58px,1.25fr) minmax(68px,1.55fr) repeat(3,minmax(32px,.62fr)) minmax(42px,.78fr);align-items:center;column-gap:4px}
+#ov .siteSummaryHead{background:#eaf0f6;color:#475467;border-radius:8px;padding:7px 6px;font-size:7px;font-weight:900;text-transform:uppercase;line-height:1.1}
+#ov .siteSummaryRow{min-height:38px;padding:7px 6px;border-bottom:1px solid #edf1f5;font-size:8.5px;color:#344054}
+#ov .siteSummaryRow:last-child{border-bottom:0}
+#ov .siteSummaryHead span:nth-child(n+3),#ov .siteSummaryRow b{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+#ov .siteSummaryCat{font-weight:900;color:#17365d;line-height:1.15;overflow-wrap:anywhere}
+#ov .siteSummaryName{font-weight:750;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#ov .siteSummaryRow b{font-size:9px}
+#ov .siteSummaryRow .siteSummaryPct.good{color:#12823b}
+#ov .siteSummaryRow .siteSummaryPct.risk{color:#d92d20}
+@media(max-width:380px){#ov .siteSection{margin-left:6px!important;margin-right:6px!important}#ov #overview.siteSummaryHost{margin-left:6px!important;margin-right:6px!important}#ov .siteSummaryCard{padding:9px 8px}#ov .siteSummaryHead,#ov .siteSummaryRow{grid-template-columns:minmax(52px,1.2fr) minmax(60px,1.45fr) repeat(3,minmax(28px,.58fr)) minmax(38px,.72fr);column-gap:3px;padding-left:4px;padding-right:4px}#ov .siteSummaryHead{font-size:6.2px}#ov .siteSummaryRow{font-size:7.5px}#ov .siteSummaryRow b{font-size:8px}}
 </style>
 </head><body><div class="app"><header><h1>HCME Monthly Focus<br><span style="font-size:.62em;font-weight:600">3274 - Dat Loi</span></h1><div class="sub">Data updated: 14/10/2026 | Norm 1M: 42.3% | Norm 3M: 80.8%</div></header><nav class="nav"><button class="on" data-p="ov">Tổng quan</button><button data-p="cov">Đã bao phủ</button><button data-p="pjp">PJP</button></nav><section id="ov" class="pane on"><div class="filters"><select id="oa"></select><select id="os"></select></div><div id="cats" class="cats"></div><div class="section">Tổng quan KPI</div><div id="overviewCharts" class="overviewCharts"></div><div class="section riskSection">Hili Risk</div><div id="risks" class="riskWrap"></div><div class="section siteSection">Chi tiết Site theo hạng mục</div><div id="overview" class="overview"></div></section><section id="cov" class="pane">
 <div class="covHeading">Đã bao phủ</div><div class="covNote">Tỷ lệ bao phủ trên tổng PJP · Total HCME và Group ASM là base cố định</div>
@@ -682,38 +687,12 @@ function teams(reset=true){if(reset){g.value='';m.value=''}let rows=byDay().filt
 function members(reset=true){if(reset)m.value='';let rows=byDay().filter(x=>(!a.value||x.asm===a.value)&&(!s.value||x.site===s.value)&&(!g.value||x.group===g.value)),keep=m.value,seen=new Set(),items=[];rows.forEach(x=>{if(x.smCode&&!seen.has(x.smCode)){seen.add(x.smCode);items.push([x.smCode,smName(x.sm)])}});items.sort((x,y)=>x[1].localeCompare(y[1],'vi'));m.innerHTML='<option value="">Tất cả SM</option>'+items.map(x=>'<option value="'+E(x[0])+'">'+E(x[1])+'</option>').join('');if(items.some(x=>x[0]===keep))m.value=keep;render(true)}
 function render(reset=true){let t=q.value.trim().toLowerCase(),u=sl.value.trim().toLowerCase();z=d.filter(x=>(!day.value||x.date===day.value)&&(!a.value||x.asm===a.value)&&(!s.value||x.site===s.value)&&(!g.value||x.group===g.value)&&(!m.value||x.smCode===m.value)&&(uncovered<0||x.status[uncovered]==='Chưa bao phủ')&&(!t||x.outlet.toLowerCase().includes(t)||x.name.toLowerCase().includes(t))&&(!u||String(x.display||'').toLowerCase().includes(u)));if(reset)limit=500;const uniqueOL=new Set(z.map(x=>String(x.outlet||'').trim()).filter(Boolean)).size;el.querySelector('.count').textContent=uniqueOL.toLocaleString('vi-VN')+' OL'+(day.value?' · '+day.value.slice(0,5):'');el.querySelector('.list').innerHTML=z.slice(0,limit).map(x=>`<article class="pCard ${x.status.every(v=>v==='Đã bao phủ')?'good':''}"><div class="pTitle">${E(x.outlet)} · ${E(x.name)}</div><div class="pMeta">${E(x.site)}</div><div class="pMeta">${E(x.group)} | ${E(smName(x.sm))}</div><div class="pMeta">Ngày PJP: ${E(x.date)} | Channel: ${E(x.channel||'—')}</div><div class="pGrid"><div class="pInfo"><div class="label">Store list T10</div><div class="value">${E(x.display||'—')}</div></div><div class="pInfo"><div class="label">Store size Hair | Fabenc | Fabclean</div><div class="value">${E(x.size||'—')}</div></div>${x.status.map((v,i)=>`<div class="pStatus ${cls(v)}"><div class="label">${CATS[i]}</div><div class="value">${E(v||'—')}</div></div>`).join('')}</div></article>`).join('');let more=el.querySelector('.pMore');more.style.display=limit<z.length?'block':'none';more.onclick=()=>{limit+=500;render(false)}}
 uf.onclick=e=>{let b=e.target.closest('button');if(!b)return;let i=+b.dataset.i;uncovered=uncovered===i?-1:i;uf.querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.i===uncovered));render(true)};day.onchange=()=>asms(true);a.onchange=()=>sites(true);s.onchange=()=>teams(true);g.onchange=()=>members(true);m.onchange=()=>render(true);q.oninput=()=>render(true);sl.oninput=()=>render(true);asms(false)}
-document.querySelector('.nav').onclick=e=>{if(!e.target.dataset.p)return;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b===e.target));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===e.target.dataset.p));scrollTo(0,0)};initO();initC();initP($('pjp'));</script><script id="hcme-site-file-mode-script">
-(function () {
-  'use strict';
-  function expandSiteCategories() {
-    var blocks = document.querySelectorAll('#ov details.siteAccordion');
-    for (var i = 0; i < blocks.length; i += 1) {
-      blocks[i].open = true;
-      blocks[i].classList.add('siteFileExpanded');
-      var summary = blocks[i].querySelector('summary');
-      if (summary && !summary.getAttribute('data-site-lock')) {
-        summary.setAttribute('data-site-lock', '1');
-        summary.setAttribute('aria-disabled', 'true');
-        summary.addEventListener('click', function (event) {
-          event.preventDefault();
-          this.parentNode.open = true;
-        });
-      }
-    }
-  }
-  expandSiteCategories();
-  if (window.MutationObserver) {
-    var root = document.getElementById('overview');
-    if (root) {
-      new MutationObserver(expandSiteCategories).observe(root, {
-        childList: true,
-        subtree: true
-      });
-    }
-  }
-  document.addEventListener('change', function () {
-    window.setTimeout(expandSiteCategories, 0);
-  });
-}());
+document.querySelector('.nav').onclick=e=>{if(!e.target.dataset.p)return;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b===e.target));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===e.target.dataset.p));scrollTo(0,0)};initO();initC();initP($('pjp'));</script><script id="hcme-site-summary-script">
+(function(){'use strict';var busy=false;
+function q(root,selector){return root.querySelector(selector)}
+function textOf(el){return el?el.textContent.trim():''}
+function make(tag,className,value){var el=document.createElement(tag);if(className)el.className=className;if(value!==undefined)el.textContent=value;return el}
+function rebuild(){if(busy)return;var host=document.getElementById('overview');if(!host)return;var blocks=host.querySelectorAll('details.siteAccordion');if(!blocks.length)return;busy=true;var card=make('div','siteSummaryCard'),grid=make('div','siteSummaryGrid'),head=make('div','siteSummaryHead');['Hạng mục','Site Name','Target','Actual','GAP','% Actual'].forEach(function(label){head.appendChild(make('span','',label))});grid.appendChild(head);for(var i=0;i<blocks.length;i+=1){var block=blocks[i],source=q(block,'.xlRows .xlRow')||q(block,'.xlTotal');if(!source)continue;var cells=source.children;if(cells.length<5)continue;var row=make('div','siteSummaryRow');row.appendChild(make('span','siteSummaryCat',textOf(q(block,'summary span:first-child'))));row.appendChild(make('span','siteSummaryName',textOf(cells[0])));row.appendChild(make('b','',textOf(cells[1])));row.appendChild(make('b','',textOf(cells[2])));row.appendChild(make('b','',textOf(cells[3])));row.appendChild(make('b','siteSummaryPct '+(source.classList.contains('good')?'good':'risk'),textOf(cells[4])));grid.appendChild(row)}card.appendChild(grid);while(host.firstChild)host.removeChild(host.firstChild);host.appendChild(card);host.classList.add('siteSummaryHost');var title=document.querySelector('#ov .siteSection');if(title)title.textContent='Tổng quan Site';busy=false}
+var host=document.getElementById('overview');if(host&&window.MutationObserver){new MutationObserver(function(){window.setTimeout(rebuild,0)}).observe(host,{childList:true,subtree:false})}rebuild();document.addEventListener('change',function(){window.setTimeout(rebuild,0)});}());
 </script>
 </body></html>
