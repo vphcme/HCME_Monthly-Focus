@@ -620,6 +620,7 @@ header{padding:13px 14px;border-radius:0 0 14px 14px}.nav{gap:5px;padding:6px 0}
 #cov .siteCoverageRow.siteCoverageNpp>strong{color:#0b4f8a;font-weight:900}
 #cov .siteCoverageRow>strong{padding:8px 7px 8px 11px;line-height:1.2;overflow-wrap:anywhere}
 #cov .siteCoverageCell{min-height:45px;height:100%;padding:8px 3px;display:flex;align-items:center;justify-content:center;background:#f7f9fc;border-left:1px solid #e7ebf0;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+#cov .siteCoverageCell.siteCoverageOl{margin:6px 5px;min-height:32px;height:auto;border:1px solid #b8d4ee!important;border-radius:8px;background:#eaf4ff!important;color:#0b4f8a!important;font-weight:900!important;box-shadow:inset 0 0 0 1px #ffffff80}
 #cov .siteCoverageCell.covRed{color:#d92d20!important}#cov .siteCoverageCell.covYellow{color:#b26a00!important}#cov .siteCoverageCell.covGreen{color:#008a31!important}
 @media(max-width:520px){
  #ov .siteSection,#ov #overview.siteSummaryHost{margin-left:6px!important;margin-right:6px!important}#ov .siteSummaryCard{padding:9px 8px}
@@ -627,7 +628,7 @@ header{padding:13px 14px;border-radius:0 0 14px 14px}.nav{gap:5px;padding:6px 0}
  #cov .siteCoverageHead{font-size:6.2px}#cov .siteCoverageRow{font-size:7.7px}#cov .siteCoverageHead span{padding:8px 2px}#cov .siteCoverageRow>strong{padding-left:7px}#cov .siteCoverageCell{padding:7px 2px}
 }
 </style>
-</head><body><div class="app"><header><h1>HCME Monthly Focus<br><span style="font-size:.62em;font-weight:600">3257 - Hai Thien Long</span></h1><div class="sub">Data updated: 14/10/2026 | Norm 1M: 42.3% | Norm 3M: 80.8%</div></header><nav class="nav"><button class="on" data-p="ov">Tổng quan</button><button data-p="cov">Đã bao phủ</button><button data-p="pjp">PJP</button></nav><section id="ov" class="pane on"><div class="filters"><select id="oa"></select><select id="os"></select></div><div id="cats" class="cats"></div><div class="section">% Thực đạt so với Target</div><div id="overviewCharts" class="overviewCharts"></div><div class="section riskSection">Hili Risk</div><div id="risks" class="riskWrap"></div><div class="section siteSection">Chi tiết Site theo hạng mục</div><div id="overview" class="overview"></div></section><section id="cov" class="pane">
+</head><body><div class="app"><header><h1>HCME Monthly Focus<br><span style="font-size:.62em;font-weight:600">3257 - Hai Thien Long</span></h1><div class="sub">Data updated: 14/10/2026 | Norm 1M: 42.3% | Norm 3M: 80.8%</div></header><nav class="nav"><button class="on" data-p="ov">Tổng quan</button><button data-p="cov">Đã bao phủ</button><button data-p="pjp">PJP</button></nav><section id="ov" class="pane on"><div class="filters"><select id="oa"></select><select id="os"></select></div><div id="cats" class="cats"></div><div class="section">% Thực đạt so với Target</div><div id="overviewCharts" class="overviewCharts"></div><div class="section riskSection">Hili Risk</div><div id="risks" class="riskWrap"></div><div class="section siteSection">Kết quả thực hiện</div><div id="overview" class="overview"></div></section><section id="cov" class="pane">
 <div class="covHeading">Tổng số SM</div>
 <div id="teamSummary" class="teamSummary"></div>
 <div id="teamTabs" class="teamTabs"></div>
@@ -713,13 +714,13 @@ function q(root,sel){return root.querySelector(sel)}
 function txt(el){return el?el.textContent.trim():''}
 function make(tag,cls,val){var el=document.createElement(tag);if(cls)el.className=cls;if(val!==undefined)el.textContent=val;return el}
 function copyCell(source){var target=make('span','siteCoverageCell',txt(source));if(source){if(source.classList.contains('covRed'))target.classList.add('covRed');if(source.classList.contains('covYellow'))target.classList.add('covYellow');if(source.classList.contains('covGreen'))target.classList.add('covGreen')}return target}
-function addCoverageRow(table,name,source,rowClass){if(!source||source.children.length<6)return;var row=make('div','siteCoverageRow'+(rowClass?' '+rowClass:''));row.appendChild(make('strong','',name));var cells=source.querySelectorAll('.covPjpCell,.covCell');for(var i=0;i<cells.length;i+=1)row.appendChild(copyCell(cells[i]));table.appendChild(row)}
+function addCoverageRow(table,name,source,rowClass){if(!source||source.children.length<6)return;var row=make('div','siteCoverageRow'+(rowClass?' '+rowClass:''));row.appendChild(make('strong','',name));var cells=source.querySelectorAll('.covPjpCell,.covCell');for(var i=0;i<cells.length;i+=1){var cell=copyCell(cells[i]);if(i===0)cell.classList.add('siteCoverageOl');row.appendChild(cell)}table.appendChild(row)}
 function buildCombinedCoverageTable(){
  if(coverageBusy)return;coverageBusy=true;
  var cov=document.getElementById('cov'),siteHost=document.getElementById('covSites'),smHost=document.getElementById('covSmDetail');if(!cov||!siteHost||!smHost){coverageBusy=false;return}
  var oldTitle=cov.querySelector('.siteCoverageCombinedTitle'),oldTable=cov.querySelector('.siteCoverageCombined');if(oldTitle)oldTitle.parentNode.removeChild(oldTitle);if(oldTable)oldTable.parentNode.removeChild(oldTable);
  var title=make('div','siteCoverageCombinedTitle','Tỷ lệ đã bao phủ trên tổng số cửa hàng thuộc PJP'),table=make('div','siteCoverageCombined'),head=make('div','siteCoverageHead');
- ['Tên','Total OL PJP','Hair 350G','Dove HF BT','Comfort Dây','Surf 2.9KG'].forEach(function(v){head.appendChild(make('span','',v))});table.appendChild(head);
+ ['Tên','OL PJP','Hair 350G','Dove HF BT','Comfort Dây','Surf 2.9KG'].forEach(function(v){head.appendChild(make('span','',v))});table.appendChild(head);
  var siteRow=q(siteHost,'.coverageSiteBody .covExcelRow:not(.covExcelHead)')||q(siteHost,'.covExcelRow:not(.covExcelHead)');if(siteRow)addCoverageRow(table,txt(q(siteRow,'strong')),siteRow,'siteCoverageNpp');
  var groups=smHost.querySelectorAll('details.smGroupBlock');
  for(var i=0;i<groups.length;i+=1){var group=groups[i],summary=q(group,'summary.smGroupTitle')||q(group,'summary'),team=txt(summary).replace(/\s*\d+\s*SM\s*$/i,'').replace(/[▲▼⌄]/g,'').trim(),rows=group.querySelectorAll('.covExcelRow.smRow');for(var j=0;j<rows.length;j+=1)addCoverageRow(table,team+' - '+txt(q(rows[j],'strong')),rows[j])}
