@@ -627,21 +627,19 @@ header{padding:13px 14px;border-radius:0 0 14px 14px}.nav{gap:5px;padding:6px 0}
 /* V1.0: keep Site summary framed; show each team once as a group header. */
 #cov .siteCoverageRow.siteCoverageNpp{margin:7px!important;border:1.5px solid #7db4e8!important;border-radius:11px!important;background:#f7fbff!important;overflow:hidden!important;box-shadow:0 1px 4px #1677d214!important}
 #cov .siteCoverageRow.siteCoverageNpp>strong{background:#f7fbff!important;color:#0b4f8a!important;font-weight:900!important}
-#cov .siteTeamHeader{grid-column:1/-1;min-height:36px;padding:9px 12px;display:flex;align-items:center;gap:8px;background:#0b5fa8;border-top:1px solid #0a548f;border-bottom:1px solid #0a548f;color:#fff;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.18px}
-#cov .siteTeamHeader:first-of-type{border-top:0}
-#cov .siteTeamHeaderCount{margin-left:auto;color:#fff;font-size:9px;font-weight:800;text-transform:none;letter-spacing:0;opacity:.9}
-#cov .siteCoverageSmOnly{font-size:11px;font-weight:750;color:#253b53;line-height:1.2;white-space:normal;overflow-wrap:anywhere}
+#cov .siteTeamName{grid-column:1/-1;margin-top:12px;padding:12px 12px 6px;background:#fff;color:#0b5fa8;font-size:13px;font-weight:900;line-height:1.2;border-top:1px solid #e6eef7}
+#cov .siteTeamName:first-of-type{margin-top:0;border-top:0}
+#cov .siteSmName{display:block;padding-left:14px;font-size:11px;font-weight:700;color:#253b53;line-height:1.2;white-space:normal;overflow-wrap:anywhere}
 /* Final Coverage visual override: white KPI cells, colored values only. */
 #cov .siteCoverageCombined .siteCoverageRow:not(.siteCoverageNpp) .siteCoverageCell{background:#fff!important}
 #cov .siteCoverageCombined .siteCoverageRow:not(.siteCoverageNpp) .siteCoverageCell.covRed{background:#fff!important;color:#d92d20!important}
 #cov .siteCoverageCombined .siteCoverageRow:not(.siteCoverageNpp) .siteCoverageCell.covYellow{background:#fff!important;color:#b26a00!important}
 #cov .siteCoverageCombined .siteCoverageRow:not(.siteCoverageNpp) .siteCoverageCell.covGreen{background:#fff!important;color:#008a31!important}
-#cov .siteCoverageCombined .siteTeamHeader,#cov .siteCoverageCombined .siteTeamHeader *{background:#0b5fa8!important;color:#fff!important}
 @media(max-width:520px){
  #ov .siteSection,#ov #overview.siteSummaryHost{margin-left:6px!important;margin-right:6px!important}#ov .siteSummaryCard{padding:9px 8px}#ov .siteSummaryHead{font-size:8px;padding:8px 4px}
  #cov .siteCoverageHead,#cov .siteCoverageRow{grid-template-columns:minmax(112px,1.78fr) minmax(49px,.7fr) repeat(4,minmax(42px,.6fr))}
  #cov .siteCoverageHead{font-size:7.4px;letter-spacing:0}#cov .siteCoverageRow{font-size:7.7px}#cov .siteCoverageHead span{padding:9px 2px}#cov .siteCoverageRow>strong{padding-left:7px}#cov .siteCoverageCell{padding:7px 2px}
- #cov .siteTeamHeader{min-height:32px;padding:7px 8px;font-size:9px}#cov .siteTeamHeaderCount{font-size:8px}#cov .siteCoverageSmOnly{font-size:10px}
+ #cov .siteTeamName{margin-top:10px;padding:10px 8px 5px;font-size:11px}#cov .siteSmName{font-size:10px}
 }
 </style>
 </head><body><div class="app"><header><h1>HCME Monthly Focus<br><span style="font-size:.62em;font-weight:600">3309 - Cuu Long Thanh</span></h1><div class="sub">Data updated: 14/10/2026 | Norm 1M: 42.3% | Norm 3M: 80.8%</div></header><nav class="nav"><button class="on" data-p="ov">Tổng quan</button><button data-p="cov">Đã bao phủ</button><button data-p="pjp">PJP</button></nav><section id="ov" class="pane on"><div class="filters"><select id="oa"></select><select id="os"></select></div><div id="cats" class="cats"></div><div class="section">% Thực đạt so với Target</div><div id="overviewCharts" class="overviewCharts"></div><div class="section riskSection">Hili Risk</div><div id="risks" class="riskWrap"></div><div class="section siteSection">Kết quả thực hiện</div><div id="overview" class="overview"></div></section><section id="cov" class="pane">
@@ -730,17 +728,38 @@ function q(root,sel){return root.querySelector(sel)}
 function txt(el){return el?el.textContent.trim():''}
 function make(tag,cls,val){var el=document.createElement(tag);if(cls)el.className=cls;if(val!==undefined)el.textContent=val;return el}
 function copyCell(source){var target=make('span','siteCoverageCell',txt(source));if(source){if(source.classList.contains('covRed'))target.classList.add('covRed');if(source.classList.contains('covYellow'))target.classList.add('covYellow');if(source.classList.contains('covGreen'))target.classList.add('covGreen')}return target}
-function addCoverageRow(table,name,source,rowClass,nameClass){if(!source||source.children.length<6)return;var row=make('div','siteCoverageRow'+(rowClass?' '+rowClass:'')),nameCell=make('strong','');nameCell.appendChild(make('span',nameClass||'',name));row.appendChild(nameCell);var cells=source.querySelectorAll('.covPjpCell,.covCell');for(var i=0;i<cells.length;i+=1){var cell=copyCell(cells[i]);if(i===0)cell.classList.add('siteCoverageOl');row.appendChild(cell)}table.appendChild(row)}
+function addCoverageRow(table,name,source,rowClass,nameClass){
+ if(!table||!source)return false;
+ var cells=source.querySelectorAll('.covPjpCell,.covCell');
+ if(cells.length!==5)return false;
+ var row=make('div','siteCoverageRow'+(rowClass?' '+rowClass:'')),nameCell=make('strong','');
+ nameCell.appendChild(make('span',nameClass||'',name||''));row.appendChild(nameCell);
+ for(var i=0;i<cells.length;i+=1){var cell=copyCell(cells[i]);if(i===0)cell.classList.add('siteCoverageOl');row.appendChild(cell)}
+ table.appendChild(row);return true;
+}
 function buildCombinedCoverageTable(){
  if(coverageBusy)return;coverageBusy=true;
- var cov=document.getElementById('cov'),siteHost=document.getElementById('covSites'),smHost=document.getElementById('covSmDetail');if(!cov||!siteHost||!smHost){coverageBusy=false;return}
- var oldTitle=cov.querySelector('.siteCoverageCombinedTitle'),oldTable=cov.querySelector('.siteCoverageCombined');if(oldTitle)oldTitle.parentNode.removeChild(oldTitle);if(oldTable)oldTable.parentNode.removeChild(oldTable);
- var title=make('div','siteCoverageCombinedTitle','Tỷ lệ đã bao phủ trên tổng số cửa hàng thuộc PJP'),table=make('div','siteCoverageCombined'),head=make('div','siteCoverageHead');
- ['Tên','OL PJP','Hair 350G','Dove HF BT','Comfort Dây','Surf 2.9KG'].forEach(function(v){head.appendChild(make('span','',v))});table.appendChild(head);
- var siteRow=q(siteHost,'.coverageSiteBody .covExcelRow:not(.covExcelHead)')||q(siteHost,'.covExcelRow:not(.covExcelHead)');if(siteRow)addCoverageRow(table,txt(q(siteRow,'strong')),siteRow,'siteCoverageNpp');
- var groups=smHost.querySelectorAll('details.smGroupBlock');
- for(var i=0;i<groups.length;i+=1){var group=groups[i],summary=q(group,'summary.smGroupTitle')||q(group,'summary'),team=txt(summary).replace(/\s*\d+\s*SM\s*$/i,'').replace(/[▲▼⌄]/g,'').trim(),rows=group.querySelectorAll('.covExcelRow.smRow'),teamHead=make('div','siteTeamHeader');teamHead.appendChild(make('span','siteTeamHeaderName',team));teamHead.appendChild(make('span','siteTeamHeaderCount',rows.length+' SM'));table.appendChild(teamHead);for(var j=0;j<rows.length;j+=1)addCoverageRow(table,txt(q(rows[j],'strong')),rows[j],'','siteCoverageSmOnly')}
- smHost.parentNode.insertBefore(title,smHost);smHost.parentNode.insertBefore(table,smHost);coverageBusy=false;
+ try{
+  var cov=document.getElementById('cov'),siteHost=document.getElementById('covSites'),smHost=document.getElementById('covSmDetail');
+  if(!cov||!siteHost||!smHost||!smHost.parentNode)return;
+  var oldTitle=cov.querySelector('.siteCoverageCombinedTitle'),oldTable=cov.querySelector('.siteCoverageCombined');
+  if(oldTitle&&oldTitle.parentNode)oldTitle.parentNode.removeChild(oldTitle);
+  if(oldTable&&oldTable.parentNode)oldTable.parentNode.removeChild(oldTable);
+  var title=make('div','siteCoverageCombinedTitle','Tỷ lệ đã bao phủ trên tổng số cửa hàng thuộc PJP'),table=make('div','siteCoverageCombined'),head=make('div','siteCoverageHead');
+  ['Tên','OL PJP','Hair 350G','Dove HF BT','Comfort Dây','Surf 2.9KG'].forEach(function(v){head.appendChild(make('span','',v))});table.appendChild(head);
+  var siteRow=q(siteHost,'.coverageSiteBody .covExcelRow:not(.covExcelHead)')||q(siteHost,'.covExcelRow:not(.covExcelHead)');
+  if(siteRow){var siteName=txt(q(siteRow,'strong'));if(siteName)addCoverageRow(table,siteName,siteRow,'siteCoverageNpp','')}
+  var groups=smHost.querySelectorAll('details.smGroupBlock');
+  for(var i=0;i<groups.length;i+=1){
+   var group=groups[i],summary=q(group,'summary.smGroupTitle')||q(group,'summary');if(!summary)continue;
+   var team=txt(summary).replace(/\s*\d+\s*SM\s*$/i,'').replace(/[▲▼⌄]/g,'').trim(),rows=group.querySelectorAll('.covExcelRow.smRow');
+   if(!team||!rows.length)continue;
+   var teamRows=document.createDocumentFragment(),validRowCount=0;
+   for(var j=0;j<rows.length;j+=1){var smName=txt(q(rows[j],'strong'));if(smName&&addCoverageRow(teamRows,smName,rows[j],'','siteSmName'))validRowCount+=1}
+   if(validRowCount>0){table.appendChild(make('div','siteTeamName',team));table.appendChild(teamRows)}
+  }
+  smHost.parentNode.insertBefore(title,smHost);smHost.parentNode.insertBefore(table,smHost);
+ }finally{coverageBusy=false}
 }
 function applySiteCoverage(){var chart=document.getElementById('covChart');if(chart)chart.style.display='none';var smHost=document.getElementById('covSmDetail');if(smHost){var smTitle=smHost.previousElementSibling;if(smTitle&&smTitle.classList.contains('covProTitle'))smTitle.style.display='none'}var leadership=document.getElementById('covLeadership');if(leadership){var t=leadership.previousElementSibling;if(t&&t.classList.contains('covProTitle'))t.style.display='none';leadership.style.display='none'}buildCombinedCoverageTable()}
 function rebuildOverview(){
