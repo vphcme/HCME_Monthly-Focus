@@ -598,6 +598,32 @@ button,input,select,textarea{font-size:14px;line-height:1.35}.section,.siteSecti
 @media(min-width:768px){body{font-size:16px;line-height:1.55}main,.wrap,.container{max-width:1180px}}
 @media(max-width:767px){:root{font-size:15px}body{font-size:14px;line-height:1.48}h1{font-size:22px!important}button,input,select,textarea{font-size:14px}}
 </style>
+
+<style id="hcme-total-pjp-filter-layout">
+#pjp .filters{display:grid!important;grid-template-columns:repeat(15,minmax(0,1fr))!important;gap:5px!important}
+#pjp .filters>.pd,#pjp .filters>.pa,#pjp .filters>.ps,#pjp .filters>.pg,#pjp .filters>.pm{grid-row:1!important;grid-column:span 3!important;min-width:0!important;width:100%!important}
+#pjp .filters>.pq,#pjp .filters>.pl,#pjp .filters>.pz{grid-row:2!important;grid-column:span 5!important;min-width:0!important;width:100%!important}
+#pjp .filters select,#pjp .filters input{height:40px!important;min-height:40px!important;box-sizing:border-box!important}
+@media(max-width:520px){
+ #pjp .filters{grid-template-columns:repeat(15,minmax(0,1fr))!important;gap:3px!important}
+ #pjp .filters select,#pjp .filters input{min-width:0!important;width:100%!important;height:40px!important;min-height:40px!important;padding-left:5px!important;padding-right:5px!important;font-size:10px!important}
+ #pjp .filters>.pd,#pjp .filters>.pa,#pjp .filters>.ps,#pjp .filters>.pg,#pjp .filters>.pm{grid-column:span 3!important}
+ #pjp .filters>.pq,#pjp .filters>.pl,#pjp .filters>.pz{grid-column:span 5!important}
+}
+</style>
+
+<style id="hcme-total-pjp-compact">
+#pjp .filters{gap:3px!important;padding:4px!important;margin-bottom:3px!important}
+#pjp .filters select,#pjp .filters input{height:34px!important;min-height:34px!important;padding-top:0!important;padding-bottom:0!important}
+#pjp .pu{gap:4px!important;margin-top:3px!important;margin-bottom:3px!important}
+#pjp .pu button{min-height:34px!important;padding-top:3px!important;padding-bottom:3px!important}
+#pjp .count{margin-top:2px!important;margin-bottom:3px!important;line-height:1.15!important}
+@media(max-width:520px){
+ #pjp .filters{gap:3px!important;padding:4px!important}
+ #pjp .filters select,#pjp .filters input{height:34px!important;min-height:34px!important}
+ #pjp .pu button{min-height:34px!important}
+}
+</style>
 <style id="hcme-site-summary-style">
 /* v3.7 - Site files only. */
 #ov .riskSection,#ov #risks,#ov #overviewCharts,#ov .filters{display:none!important}
@@ -637,7 +663,11 @@ button,input,select,textarea{font-size:14px;line-height:1.35}.section,.siteSecti
  #cov .siteCoverageHead{font-size:7.5px;letter-spacing:0}#cov .siteCoverageRow{font-size:9px}#cov .siteCoverageHead span{padding:8px 2px;white-space:normal;line-height:1.18}#cov .siteCoverageRow>strong{padding-left:7px}#cov .siteCoverageCell{padding:8px 2px}#cov .siteCoverageCell.siteCoverageOl{min-height:45px}
 }
 /* PJP Site: 5 filters in one row + 4 red buttons + 4 yellow buttons. */
-#pjp .filters.sitePjpFilters{display:grid!important;grid-template-columns:minmax(54px,.68fr) minmax(56px,.72fr) minmax(64px,.82fr) minmax(94px,1.25fr) minmax(76px,1fr) minmax(84px,1.08fr)!important;gap:4px!important;padding:5px!important;margin:0 0 4px!important}
+#pjp .filters.sitePjpFilters{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;padding:5px!important;margin:0 0 4px!important}
+#pjp .filters.sitePjpFilters>.pd,#pjp .filters.sitePjpFilters>.pg,#pjp .filters.sitePjpFilters>.pm{grid-row:1!important;grid-column:auto!important}
+#pjp .filters.sitePjpFilters>.pq,#pjp .filters.sitePjpFilters>.pl,#pjp .filters.sitePjpFilters>.ps{grid-row:2!important;grid-column:auto!important}
+#pjp .filters.sitePjpFilters>.pd,#pjp .filters.sitePjpFilters>.pg,#pjp .filters.sitePjpFilters>.pm{grid-row:1!important;grid-column:auto!important}
+#pjp .filters.sitePjpFilters>.pq,#pjp .filters.sitePjpFilters>.pl,#pjp .filters.sitePjpFilters>.ps{grid-row:2!important;grid-column:auto!important}
 #pjp .filters.sitePjpFilters select,#pjp .filters.sitePjpFilters input{grid-column:auto!important;width:100%!important;min-width:0!important;height:36px!important;min-height:36px!important;padding:0 5px!important;font-size:8.5px!important}
 #pjp .pFilterLabel{font-size:8px;font-weight:900;line-height:1.15;margin:4px 1px 3px;color:#667085;text-transform:uppercase}
 #pjp .pu.siteUncovered,#pjp .pu.siteIneligible{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;margin:0 0 4px!important}
